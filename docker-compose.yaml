@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+    mariadb:
+        image: mariadb:10.5
+        environment: 
+            MYSQL_ROOT_PASSWORD: nishi
+            MYSQL_USER: ghost
+            MYSQL_PASSWORD: ghost1234
+            MYSQL_DATABASE: ghost_production
+        restart: always
+        volumes: 
+        - type: bind
+          source: ~/mariadb_data
+          target: /var/lib/mysql
+    ghost:
+        image: ghost:3-alpine
+        restart: always
+        ports: 
+        - 8080:2368
+        environment: 
+            database_client: mysql
+            database_connection_host: mariadb
+            database_connection_database: ghost_production
+            database_connection_user: ghost
+            database_connection_password: ghost1234
+            url: http://localhost:8080
+        depends_on:
+        - mariadb
+        volumes: 
+        - type: bind
+          source: ~/ghost
+          target: /var/lib/ghost/content
